@@ -1,0 +1,71 @@
+<!-- The Shell component is used as a layout for this template -->
+<calcite-shell content-behind>
+  <calcite-navigation slot="header">
+    <!-- Heading and description dynamically populated in app.ts -->
+    <calcite-navigation-logo
+      [heading]="navHeading"
+      [description]="navDescription"
+      heading-level="1"
+      slot="logo"
+    ></calcite-navigation-logo>
+  </calcite-navigation>
+<!-- Sidebar -->
+
+<calcite-shell-panel slot="panel-start" position="start" width-scale="m" display-mode="float">
+  <calcite-panel heading="Estadísticas">
+    @if (isLoading()){
+      <calcite-loader label="Cargando datos..."></calcite-loader>
+    } @else {
+    <calcite-list>
+      <calcite-list-item
+        label="Incendios activos"
+        description="{{ totalFires() }}"
+        icon-start="exclamation-point"
+      ></calcite-list-item>
+      <calcite-list-item
+        label="Intensidad máxima (FRP)"
+        description="{{ maxIntensity() }}"
+        icon-start="graph-time-series"
+      ></calcite-list-item>
+    </calcite-list>
+  <!-- Legend -->
+  <div class="legend">
+      <h4>Intensidad del incendio</h4>
+      <div class="legend-item">
+        <span class="dot" style="background: rgb(255, 255, 0)"></span>
+        <span>Baja (FRP &lt; 5)</span>
+      </div>
+      <div class="legend-item">
+        <span class="dot" style="background: rgb(255, 165, 0)"></span>
+        <span>Media (5–20)</span>
+      </div>
+      <div class="legend-item">
+        <span class="dot" style="background: rgb(255, 69, 0)"></span>
+        <span>Alta (20–50)</span>
+      </div>
+      <div class="legend-item">
+        <span class="dot" style="background: rgb(200, 0, 0)"></span>
+        <span>Muy alta (&gt; 50)</span>
+      </div>
+    </div>}
+  </calcite-panel>
+</calcite-shell-panel>
+
+
+  <!-- The Map component fits to the size of the parent element -->
+  <!-- The basemap, extent, zoom and more are provided by the Web Map (item-id) -->
+  <!-- Note: popup-component-enabled enables the Popup component (beta). See https://developers.arcgis.com/javascript/latest/references/map-components/components/arcgis-map/#popupComponentEnabled for details. -->
+  <arcgis-map
+    basemap = "topo-vector"
+    center = "-3.7, 40.4"
+    zoom = "6"
+    (arcgisViewReadyChange)="arcgisViewReadyChange($event)"
+  >
+    <arcgis-zoom slot="top-left"></arcgis-zoom>
+    <arcgis-search slot="top-right"></arcgis-search>
+    <arcgis-expand slot="bottom-left">
+      <arcgis-legend></arcgis-legend>
+    </arcgis-expand>
+    <!-- A Feature Layer in the Web Map has an associated chart (layer-item-id) -->
+  </arcgis-map>
+</calcite-shell>

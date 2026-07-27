@@ -1,0 +1,38 @@
+html,
+body {
+  background-color: var(--calcite-ui-foreground-2);
+  height: 100%;
+  margin: 0;
+}
+
+arcgis-chart {
+  width: 350px;
+  height: 250px;
+}
+
+
+.legend {
+  padding: 12px 16px;
+}
+
+.legend h4 {
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
