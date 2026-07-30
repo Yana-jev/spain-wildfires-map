@@ -26,6 +26,12 @@ import "@esri/calcite-components/components/calcite-panel";
 import "@esri/calcite-components/components/calcite-list";
 import "@esri/calcite-components/components/calcite-list-item";
 import "@esri/calcite-components/components/calcite-loader";
+import "@esri/calcite-components/components/calcite-label";
+import "@esri/calcite-components/components/calcite-select";
+import "@esri/calcite-components/components/calcite-option";
+import "@esri/calcite-components/components/calcite-slider";
+import '@esri/calcite-components/dist/components/calcite-segmented-control';
+import '@esri/calcite-components/dist/components/calcite-segmented-control-item';
 
 // Import modules and types from the SDK's core API
 import Graphic from "@arcgis/core/Graphic.js";
@@ -48,6 +54,9 @@ export class App implements OnInit {
   totalFires = signal(0);
   maxIntensity = signal(0);
   isLoading = signal(true);
+  selectedDays = signal(3);
+  minIntensity = signal(0);
+  allFires: FirePoint[] = [];
   private fireService = inject(Fires);
   private mapView?: ArcgisMap;
 
@@ -85,14 +94,13 @@ export class App implements OnInit {
 
 
 
-  loadFires(): void {
-    this.fireService.getFires().subscribe( data => {
-      const fires = this.fireService.parseCsv(data);
-      this.renderFires(fires)
-    } )
-  }
-
-
+loadFires(): void {
+  this.isLoading.set(true);
+  this.fireService.getFires(this.selectedDays()).subscribe( data => {
+    this.allFires = this.fireService.parseCsv(data);
+    this.applyFilter(); 
+  } )
+}
 
   renderFires(fires: FirePoint[]): void{
     this.totalFires.set(fires.length);
@@ -101,6 +109,7 @@ export class App implements OnInit {
     console.log('Всего:', this.totalFires, 'Макс. интенсивность:', this.maxIntensity);
 
     if  (!this.mapView) return;
+    this.mapView.graphics.removeAll();
 
     fires.forEach(fire => {
       const point = new Point({
@@ -131,4 +140,26 @@ export class App implements OnInit {
     this.mapView!.graphics.add(graphic);
     })
   }
+
+  onDaysChange(event: any): void {
+    this.isLoading.set(true);
+  this.selectedDays.set(Number(event.target.value));
+  this.loadFires();
+}
+
+onIntensityChange(event: any): void {
+  this.minIntensity.set(Number(event.target.value));
+  this.applyFilter();
+}
+
+applyFilter(): void {
+  
+  const filtered = this.allFires.filter(fire => fire.frp >= this.minIntensity());
+
+  this.totalFires.set(filtered.length);
+  this.maxIntensity.set(filtered.length > 0 ? Math.max(...filtered.map(f => f.frp)) : 0);
+  this.isLoading.set(false);
+
+  this.renderFires(filtered);
+}
 }

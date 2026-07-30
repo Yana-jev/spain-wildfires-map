@@ -13,6 +13,26 @@
 
 <calcite-shell-panel slot="panel-start" position="start" width-scale="m" display-mode="float">
   <calcite-panel heading="Estadísticas">
+    <div class="filters">
+      <calcite-label>
+        Período
+  <calcite-segmented-control (calciteSegmentedControlChange)="onDaysChange($event)">
+    <calcite-segmented-control-item value="1" checked>1 día</calcite-segmented-control-item>
+    <calcite-segmented-control-item value="2">2 días</calcite-segmented-control-item>
+    <calcite-segmented-control-item value="3">3 días</calcite-segmented-control-item>
+  </calcite-segmented-control>
+      </calcite-label>
+
+<calcite-label>
+  Intensidad mínima
+  <calcite-segmented-control (calciteSegmentedControlChange)="onIntensityChange($event)">
+    <calcite-segmented-control-item value="0" checked>Todas</calcite-segmented-control-item>
+    <calcite-segmented-control-item value="5">Media (FRP ≥ 5)</calcite-segmented-control-item>
+    <calcite-segmented-control-item value="20">Alta (FRP ≥ 20)</calcite-segmented-control-item>
+    <calcite-segmented-control-item value="50">Muy alta (FRP ≥ 50)</calcite-segmented-control-item>
+  </calcite-segmented-control>
+</calcite-label>
+    </div>
     @if (isLoading()){
       <calcite-loader label="Cargando datos..."></calcite-loader>
     } @else {

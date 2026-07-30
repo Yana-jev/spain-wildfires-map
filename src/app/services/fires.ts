@@ -11,8 +11,8 @@ export class Fires {
    private baseUrl = 'https://firms.modaps.eosdis.nasa.gov/api/area/csv';
    
 
-   getFires(): Observable<string>{
-      const url = `${this.baseUrl}/${this.apiKey}/VIIRS_SNPP_NRT/-9.5,35.9,3.4,43.8/2`;
+   getFires(days: number = 3): Observable<string>{
+      const url = `${this.baseUrl}/${this.apiKey}/VIIRS_SNPP_NRT/-9.5,35.9,3.4,43.8/${days}`;
       return this.http.get(url, { responseType: 'text' });
    }
 
