@@ -39,7 +39,7 @@
     <calcite-list>
       <calcite-list-item
         label="Incendios activos"
-        description="{{ totalFires() }}"
+        [description]="totalFires().toString()"
         icon-start="exclamation-point"
       ></calcite-list-item>
       <calcite-list-item
