@@ -32,12 +32,7 @@ import "@esri/calcite-components/components/calcite-option";
 import "@esri/calcite-components/components/calcite-slider";
 import '@esri/calcite-components/dist/components/calcite-segmented-control';
 import '@esri/calcite-components/dist/components/calcite-segmented-control-item';
-
-// Import modules and types from the SDK's core API
-import Graphic from "@arcgis/core/Graphic.js";
-import Point from "@arcgis/core/geometry/Point.js";
-import SimpleLineSymbol from "@arcgis/core/symbols/SimpleLineSymbol.js";
-import SimpleMarkerSymbol from "@arcgis/core/symbols/SimpleMarkerSymbol.js";
+import GeoJSONLayer from "@arcgis/core/layers/GeoJSONLayer.js";
 import type { ArcgisMap } from "@arcgis/map-components/components/arcgis-map";
 import { FirePoint } from "./interfaces/Fire-point";
 
@@ -54,11 +49,13 @@ export class App implements OnInit {
   totalFires = signal(0);
   maxIntensity = signal(0);
   isLoading = signal(true);
-  selectedDays = signal(3);
+  selectedDays = signal(1);
   minIntensity = signal(0);
+  maxIntensityFilter = signal(999999);
   allFires: FirePoint[] = [];
   private fireService = inject(Fires);
   private mapView?: ArcgisMap;
+  private firesLayer?: GeoJSONLayer;
 
   ngOnInit(): void {
     console.log("OnInit");
@@ -101,45 +98,51 @@ loadFires(): void {
     this.applyFilter(); 
   } )
 }
+renderFires(fires: FirePoint[]): void {
+  this.totalFires.set(fires.length);
+  this.maxIntensity.set(fires.length > 0 ? Math.max(...fires.map(f => f.frp)) : 0);
+  this.isLoading.set(false);
 
-  renderFires(fires: FirePoint[]): void{
-    this.totalFires.set(fires.length);
-    this.maxIntensity.set(Math.max(...fires.map(f => f.frp)));
-    this.isLoading.set(false)
-    console.log('Всего:', this.totalFires, 'Макс. интенсивность:', this.maxIntensity);
+  if (!this.mapView) return;
 
-    if  (!this.mapView) return;
-    this.mapView.graphics.removeAll();
-
-    fires.forEach(fire => {
-      const point = new Point({
-        longitude: fire.longitude,
-        latitude: fire.latitude
-      });
-
-    const symbol = new SimpleMarkerSymbol({
-      style: "circle",
-      size: 8,
-      color: this.getColorForIntensity(fire.frp),
-      outline: new SimpleLineSymbol({ color: "orange", width: 1 })
-    });
-
-      const graphic = new Graphic({
-      geometry: point,
-      symbol: symbol,
-      attributes: {
-        date: fire.acq_date,
-        intensity: fire.frp
-      },
-      popupTemplate: {
-        title: "Incendio detectado",
-        content: "Fecha: {date}<br>Intensidad (FRP): {intensity}"
-      }
-    });
-
-    this.mapView!.graphics.add(graphic);
-    })
+  // Убираем старый слой перед созданием нового (при смене фильтров)
+  if (this.firesLayer) {
+    this.mapView.map!.remove(this.firesLayer);
   }
+
+  const geojson = {
+    type: "FeatureCollection",
+    features: fires.map(fire => ({
+      type: "Feature",
+      geometry: { type: "Point", coordinates: [fire.longitude, fire.latitude] },
+      properties: { frp: fire.frp, date: fire.acq_date }
+    }))
+  };
+
+  const blob = new Blob([JSON.stringify(geojson)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  this.firesLayer =  new GeoJSONLayer({
+    url: url,
+    title: "Incendios activos",
+    renderer: {
+      type: "class-breaks",
+      field: "frp",
+      classBreakInfos: [
+        { minValue: 0, maxValue: 5, symbol: { type: "simple-marker", color: [255, 255, 0], size: 8, outline: { color: "white", width: 1 } } },
+        { minValue: 5, maxValue: 20, symbol: { type: "simple-marker", color: [255, 165, 0], size: 8, outline: { color: "white", width: 1 } } },
+        { minValue: 20, maxValue: 50, symbol: { type: "simple-marker", color: [255, 69, 0], size: 8, outline: { color: "white", width: 1 } } },
+        { minValue: 50, maxValue: 999999, symbol: { type: "simple-marker", color: [200, 0, 0], size: 8, outline: { color: "white", width: 1 } } },
+      ]
+    } as any,
+    popupTemplate: {
+      title: "Incendio detectado",
+      content: "Fecha: {date}<br>Intensidad (FRP): {frp}"
+    }
+  });
+
+  this.mapView.map!.add(this.firesLayer);
+}
 
   onDaysChange(event: any): void {
     this.isLoading.set(true);
@@ -148,13 +151,34 @@ loadFires(): void {
 }
 
 onIntensityChange(event: any): void {
-  this.minIntensity.set(Number(event.target.value));
+  const value = event.target.value;
+
+  switch (value) {
+    case '0':
+      this.minIntensity.set(0);
+      this.maxIntensityFilter.set(999999);
+      break;
+    case '5':
+      this.minIntensity.set(5);
+      this.maxIntensityFilter.set(20);
+      break;
+    case '20':
+      this.minIntensity.set(20);
+      this.maxIntensityFilter.set(50);
+      break;
+    case '50':
+      this.minIntensity.set(50);
+      this.maxIntensityFilter.set(999999);
+      break;
+  }
+
   this.applyFilter();
 }
 
 applyFilter(): void {
-  
-  const filtered = this.allFires.filter(fire => fire.frp >= this.minIntensity());
+  const filtered = this.allFires.filter(
+    fire => fire.frp >= this.minIntensity() && fire.frp < this.maxIntensityFilter()
+  );
 
   this.totalFires.set(filtered.length);
   this.maxIntensity.set(filtered.length > 0 ? Math.max(...filtered.map(f => f.frp)) : 0);
