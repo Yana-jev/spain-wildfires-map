@@ -38,23 +38,18 @@ Filtrado reactivo por período e intensidad sin recargar el mapa completo
 npm install -g @angular/cli
 
 
-### 1. Clonar el repositorio
-
-```bash
-git clone https://github.com/Yana-jev/spain-wildfires-map
-
-
-
-### 2. Instalar dependencias
-
-```bash
-npm install
-
-
-### 4. Levantar el servidor de desarrollo
-
-```bash
-ng serve
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Yana-jev/spain-wildfires-map
+2. 
+   ```bash
+   npm install
+3. 
+   ```bash
+   npm start
+3. 
+   ```bash
+   ng serve
 
 
 📌 Por qué este proyecto
