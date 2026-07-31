@@ -55,7 +55,7 @@ npm install
 
 ```bash
 ng serve
-```
+
 
 📌 Por qué este proyecto
 Quería demostrar, con código real, las mismas habilidades que se piden en el perfil de Desarrollador/a WebGIS de Cotesa:
