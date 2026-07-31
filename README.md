@@ -34,28 +34,28 @@ Filtrado reactivo por período e intensidad sin recargar el mapa completo
 - Node.js v18 o superior
 - Angular CLI instalado globalmente
 
-\`\`\`bash
+```bash
 npm install -g @angular/cli
-\`\`\`
+```
 
 ### 1. Clonar el repositorio
 
-\`\`\`bash
+```bash
 git clone https://github.com/Yana-jev/spain-wildfires-map
 
-\`\`\`
+```
 
 ### 2. Instalar dependencias
 
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
 ### 4. Levantar el servidor de desarrollo
 
-\`\`\`bash
+```bash
 ng serve
-\`\`\`
+```
 
 📌 Por qué este proyecto
 Quería demostrar, con código real, las mismas habilidades que se piden en el perfil de Desarrollador/a WebGIS de Cotesa:
