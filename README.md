@@ -34,9 +34,6 @@ Filtrado reactivo por período e intensidad sin recargar el mapa completo
 - Node.js v18 o superior
 - Angular CLI instalado globalmente
 
-```bash
-npm install -g @angular/cli
-
 
 1. Clone the repository:
    ```bash
