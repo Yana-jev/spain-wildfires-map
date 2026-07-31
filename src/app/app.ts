@@ -49,7 +49,7 @@ export class App implements OnInit {
   totalFires = signal(0);
   maxIntensity = signal(0);
   isLoading = signal(true);
-  selectedDays = signal(1);
+  selectedDays = signal(3);
   minIntensity = signal(0);
   maxIntensityFilter = signal(999999);
   allFires: FirePoint[] = [];
@@ -105,41 +105,48 @@ renderFires(fires: FirePoint[]): void {
 
   if (!this.mapView) return;
 
-  // Убираем старый слой перед созданием нового (при смене фильтров)
+
   if (this.firesLayer) {
     this.mapView.map!.remove(this.firesLayer);
   }
 
-  const geojson = {
-    type: "FeatureCollection",
-    features: fires.map(fire => ({
-      type: "Feature",
-      geometry: { type: "Point", coordinates: [fire.longitude, fire.latitude] },
-      properties: { frp: fire.frp, date: fire.acq_date }
-    }))
-  };
+const geojson = {
+  type: "FeatureCollection",
+  features: fires.map((fire, index) => ({
+    type: "Feature",
+    geometry: { type: "Point", coordinates: [fire.longitude, fire.latitude] },
+    properties: { frp: fire.frp, date: fire.acq_date, OBJECTID: index }
+  }))
+};
 
   const blob = new Blob([JSON.stringify(geojson)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
 
-  this.firesLayer =  new GeoJSONLayer({
-    url: url,
-    title: "Incendios activos",
-    renderer: {
-      type: "class-breaks",
-      field: "frp",
-      classBreakInfos: [
-        { minValue: 0, maxValue: 5, symbol: { type: "simple-marker", color: [255, 255, 0], size: 8, outline: { color: "white", width: 1 } } },
-        { minValue: 5, maxValue: 20, symbol: { type: "simple-marker", color: [255, 165, 0], size: 8, outline: { color: "white", width: 1 } } },
-        { minValue: 20, maxValue: 50, symbol: { type: "simple-marker", color: [255, 69, 0], size: 8, outline: { color: "white", width: 1 } } },
-        { minValue: 50, maxValue: 999999, symbol: { type: "simple-marker", color: [200, 0, 0], size: 8, outline: { color: "white", width: 1 } } },
-      ]
-    } as any,
-    popupTemplate: {
-      title: "Incendio detectado",
-      content: "Fecha: {date}<br>Intensidad (FRP): {frp}"
-    }
-  });
+  this.firesLayer = new GeoJSONLayer({
+  url: url,
+  title: "Incendios activos",
+  geometryType: "point",
+  objectIdField: "OBJECTID",
+  fields: [
+    { name: "OBJECTID", type: "oid" },
+    { name: "frp", type: "double" },
+    { name: "date", type: "string" }
+  ],
+  renderer: {
+    type: "class-breaks",
+    field: "frp",
+    classBreakInfos: [
+      { minValue: 0, maxValue: 5, symbol: { type: "simple-marker", color: [255, 255, 0], size: 8, outline: { color: "white", width: 1 } } },
+      { minValue: 5, maxValue: 20, symbol: { type: "simple-marker", color: [255, 165, 0], size: 8, outline: { color: "white", width: 1 } } },
+      { minValue: 20, maxValue: 50, symbol: { type: "simple-marker", color: [255, 69, 0], size: 8, outline: { color: "white", width: 1 } } },
+      { minValue: 50, maxValue: 999999, symbol: { type: "simple-marker", color: [200, 0, 0], size: 8, outline: { color: "white", width: 1 } } },
+    ]
+  } as any,
+  popupTemplate: {
+    title: "Incendio detectado",
+    content: "Fecha: {date}<br>Intensidad (FRP): {frp}"
+  }
+});
 
   this.mapView.map!.add(this.firesLayer);
 }
