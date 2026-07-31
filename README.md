@@ -1,36 +1,56 @@
-# ArcGIS Maps SDK for JavaScript Angular template
+🔥 Visor de Incendios Forestales en Tiempo Real
 
-📁 **[Click here to download this directory as a ZIP file](https://esri.github.io/jsapi-resources/zips/js-maps-sdk-angular.zip)** 📁
+Aplicación WebGIS construida con Angular y ArcGIS Maps SDK for JavaScript que visualiza incendios activos en tiempo real usando datos abiertos de NASA FIRMS.
 
-This template demonstrates how to use the [ArcGIS Maps SDK for JavaScript](https://developers.arcgis.com/javascript/latest/) in a Angular application.
+Este proyecto nació como preparación práctica para trabajar con tecnologías ESRI en un contexto profesional — específicamente, con la vacante de Desarrollador/a WebGIS de Cotesa en mente.
 
-> [!TIP]
-> **Angular 22** Angular 22 introduces a new chunk optimization strategy that may produce a substantially different build output than Angular 21. In testing with this sample application, Angular 22 generated fewer chunks, changed startup bundle composition, and produced different Lighthouse performance results.
->
-> If you want a build output that more closely resembles Angular 21, add the following build script to your package.json:
->
-> `"build-faster": "NG_BUILD_OPTIMIZE_CHUNKS=0 ng build --configuration production"`
-> Performance characteristics vary by application. Be sure to benchmark your build times and runtime performance before and after enabling this workaround.
+🗺️ Qué hace
+Muestra incendios activos en España sobre un mapa interactivo (arcgis-map)
+Permite filtrar por período (1, 2 o 3 días) y por intensidad del incendio (FRP)
+Renderiza los puntos con una simbología de clases (class-breaks) según intensidad
+Popup con fecha e intensidad al hacer clic en cada incendio
+Panel lateral con estadísticas en tiempo real (total de incendios, intensidad máxima) y leyenda visual
+Interfaz construida con Calcite Design System (shell, panel, list, segmented-control)
 
-## Get started
+🛠️ Stack técnico
+Categoría	Tecnologías
+Framework	Angular (standalone components, Signals)
+Mapas	ArcGIS Maps SDK for JavaScript (@arcgis/core, @arcgis/map-components)
+UI	Calcite Design System (@esri/calcite-components)
+Datos	NASA FIRMS (CSV → GeoJSON en cliente)
+Capas	GeoJSONLayer con renderer class-breaks
+Lenguaje	TypeScript
 
-To quickly scaffold a new application using this template, run the following command in your terminal:
+📐 Arquitectura
+Fires service: obtiene y parsea los datos CSV de NASA FIRMS
+App component: gestiona el estado con Signals (totalFires, maxIntensity, isLoading, filtros)
+Conversión de datos a GeoJSON en cliente → Blob → GeoJSONLayer dinámico
+Filtrado reactivo por período e intensidad sin recargar el mapa completo
 
-```bash
-npx @arcgis/create -n my-arcgis-app -t angular
-```
 
-This template uses the following packages:
+🚀 Cómo ejecutarlo localmente
+Requisitos previos
+Node.js v18 o superior
+Angular CLI instalado globalmente
+bash
+npm install -g @angular/cli
+1. Clonar el repositorio
+bash
+git clone https://github.com/<tu-usuario>/<nombre-del-repo>.git
+cd <nombre-del-repo>
+2. Instalar dependencias
+bash
+npm install
+3. (Opcional) Configurar variables de entorno
 
-- [`@arcgis/core`](https://www.npmjs.com/package/@arcgis/core)
-- [`@arcgis/map-components`](https://www.npmjs.com/package/@arcgis/map-components)
-- [`@arcgis/charts-components`](https://www.npmjs.com/package/@arcgis/charts-components)
-- [`@esri/calcite-components`](https://www.npmjs.com/package/@esri/calcite-components)
+Si el proyecto usa una API key o portal de ArcGIS propio, crea un archivo .env o revisa src/auth/configureOAuth.ts y añade tus credenciales:
 
-## Known issues
+bash
+# .env (ejemplo, si aplica)
+ARCGIS_APP_ID=tu_app_id_aqui
 
-- Compile warnings for SDK dependencies on npm packages using CommonJS or AMD is a known issue and can be ignored. For the list of warnings being suppressed, see this project's `angular.json` file, under `allowedCommonJsDependencies`.
+Si no usas un portal privado ni OAuth, puedes omitir este paso — el mapa base y las capas públicas funcionan sin credenciales adicionales.
 
-## Resources
-
-See the [Get started with npm guide](https://developers.arcgis.com/javascript/latest/get-started/#use-arcgiscreate) for full instructions.
+4. Levantar el servidor de desarrollo
+bash
+ng serve
