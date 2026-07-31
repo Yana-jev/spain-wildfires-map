@@ -42,15 +42,15 @@ cd <nombre-del-repo>
 bash
 npm install
 3. (Opcional) Configurar variables de entorno
-
 Si el proyecto usa una API key o portal de ArcGIS propio, crea un archivo .env o revisa src/auth/configureOAuth.ts y añade tus credenciales:
-
-bash
-# .env (ejemplo, si aplica)
-ARCGIS_APP_ID=tu_app_id_aqui
-
-Si no usas un portal privado ni OAuth, puedes omitir este paso — el mapa base y las capas públicas funcionan sin credenciales adicionales.
-
 4. Levantar el servidor de desarrollo
 bash
 ng serve
+
+📌 Por qué este proyecto
+Quería demostrar, con código real, las mismas habilidades que se piden en el perfil de Desarrollador/a WebGIS de Cotesa:
+
+Desarrollo de aplicaciones WebGIS con Angular y ArcGIS Maps SDK for JavaScript ✅
+Componentes cartográficos interactivos ✅
+Consumo e integración de datos geoespaciales externos ✅
+Visualización e interacción intuitiva con información geográfica ✅
