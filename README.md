@@ -28,24 +28,34 @@ Conversión de datos a GeoJSON en cliente → Blob → GeoJSONLayer dinámico
 Filtrado reactivo por período e intensidad sin recargar el mapa completo
 
 
-🚀 Cómo ejecutarlo localmente
-Requisitos previos
-Node.js v18 o superior
-Angular CLI instalado globalmente
-bash
+## 🚀 Cómo ejecutarlo localmente
+
+### Requisitos previos
+- Node.js v18 o superior
+- Angular CLI instalado globalmente
+
+\`\`\`bash
 npm install -g @angular/cli
-1. Clonar el repositorio
-bash
-git clone https://github.com/<tu-usuario>/<nombre-del-repo>.git
-cd <nombre-del-repo>
-2. Instalar dependencias
-bash
+\`\`\`
+
+### 1. Clonar el repositorio
+
+\`\`\`bash
+git clone https://github.com/Yana-jev/spain-wildfires-map
+
+\`\`\`
+
+### 2. Instalar dependencias
+
+\`\`\`bash
 npm install
-3. (Opcional) Configurar variables de entorno
-Si el proyecto usa una API key o portal de ArcGIS propio, crea un archivo .env o revisa src/auth/configureOAuth.ts y añade tus credenciales:
-4. Levantar el servidor de desarrollo
-bash
+\`\`\`
+
+### 4. Levantar el servidor de desarrollo
+
+\`\`\`bash
 ng serve
+\`\`\`
 
 📌 Por qué este proyecto
 Quería demostrar, con código real, las mismas habilidades que se piden en el perfil de Desarrollador/a WebGIS de Cotesa:
